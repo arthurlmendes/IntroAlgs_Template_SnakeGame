@@ -6,7 +6,7 @@ A proposta deve apresentar uma ideia simples, clara e viável para ser desenvolv
 
 ## 1. Nome provisório do jogo
 
-Escreva aqui o nome provisório do jogo.
+Snake Game
 
 Exemplo:
 
@@ -16,14 +16,11 @@ Exemplo:
 
 Liste os integrantes do grupo.
 
-- Nome 1:
-- Nome 2:
-- Nome 3:
-- Nome 4:
+- Nome: Arthur Lima Mendes
 
 ## 3. Tipo de jogo
 
-Indique o tipo de jogo que será desenvolvido.
+Snake (Jogo da Cobra)
 
 Exemplos:
 
@@ -40,7 +37,7 @@ Exemplos:
 - jogo de clique rápido;
 - jogo de sobrevivência simples.
 
-Tipo escolhido pelo grupo:
+Tipo escolhido pelo grupo: 
 
 > Escreva aqui.
 
