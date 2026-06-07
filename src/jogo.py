@@ -19,7 +19,27 @@ from src.funcoes import (
     mover_cabeca_cobra,
 )
 
+def executar_jogo():
+    
+    pygame.init()
 
+    tela = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
+    pygame.display.set_caption(TITULO_JOGO)
+
+    relogio = pygame.time.Clock()
+    rodando = True
+
+ 
+    cobra_x = 300
+    cobra_y = 300
+    direcao = "DIREITA"
+
+    rect_cobra = pygame.Rect(cobra_x, cobra_y, TAMANHO_BLOCO, TAMANHO_BLOCO)
+    
+    
+    comida_x = random.randint(0, (LARGURA_TELA - TAMANHO_BLOCO) // TAMANHO_BLOCO) * TAMANHO_BLOCO
+    comida_y = random.randint(0, (ALTURA_TELA - TAMANHO_BLOCO) // TAMANHO_BLOCO) * TAMANHO_BLOCO
+    rect_comida = pygame.Rect(comida_x, comida_y, TAMANHO_BLOCO, TAMANHO_BLOCO)
 from src.sprites import pegar_sprite
 from src.dados import (
     salvar_recorde,
@@ -38,19 +58,19 @@ def executar_jogo():
     relogio = pygame.time.Clock()
     rodando = True
 
-    # 1. Carregando as imagens recortadas do Spritesheet
+    
 
 
-    # Jogador: usando tamanho 110x110 para capturar o quadrado perfeitamente
+   
     player_image = pegar_sprite(CAMINHO_SPRITES, x=110, y=120, width=190, height=190, scale=0.5)
 
-    # Gema pequena: usando tamanho 64x64
+    
     gem_image    = pegar_sprite(CAMINHO_SPRITES, x=900, y=690, width=200, height=200, scale=0.5)
 
-    # Morcego: usando tamanho 180x120 por causa das asas abertas
+    
     bat_image    = pegar_sprite(CAMINHO_SPRITES, x=905, y=1060, width=200, height=130, scale=0.5)
     
-    # 2. Criando a estrutura de Sprites usando Dicionários
+  
     jogador = {
         "imagem": player_image,
         "rect": player_image.get_rect(topleft=(100, 100))
@@ -78,11 +98,40 @@ def executar_jogo():
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 rodando = False
+            elif evento.type == pygame.KEYDOWN:
+                if evento.key in (pygame.K_UP, pygame.K_w) and direcao != "BAIXO":
+                    direcao = "CIMA"
+                elif evento.key in (pygame.K_DOWN, pygame.K_s) and direcao != "CIMA":
+                    direcao = "BAIXO"
+                elif evento.key in (pygame.K_LEFT, pygame.K_a) and direcao != "DIREITA":
+                    direcao = "ESQUERDA"
+                elif evento.key in (pygame.K_RIGHT, pygame.K_d) and direcao != "ESQUERDA":
+                    direcao = "DIREITA"
+     
+        rect_cobra.x, rect_cobra.y = mover_cabeca_cobra(rect_cobra.x, rect_cobra.y, direcao, TAMANHO_BLOCO)
 
-        teclas = pygame.key.get_pressed()
+        # Limita a cobra dentro das bordas da tela neste protótipo
+        rect_cobra.x = limitar_valor(rect_cobra.x, 0, LARGURA_TELA - TAMANHO_BLOCO)
+        rect_cobra.y = limitar_valor(rect_cobra.y, 0, ALTURA_TELA - TAMANHO_BLOCO)
 
-        # Movimentação alterando direto os eixos X e Y do retângulo do jogador
-        if teclas[pygame.K_LEFT]:
+        # Elemento Interativo: Se colidir com a comida, ela muda de lugar
+        if verificar_colisao(rect_cobra, rect_comida):
+            rect_comida.x = random.randint(0, (LARGURA_TELA - TAMANHO_BLOCO) // TAMANHO_BLOCO) * TAMANHO_BLOCO
+            rect_comida.y = random.randint(0, (ALTURA_TELA - TAMANHO_BLOCO) // TAMANHO_BLOCO) * TAMANHO_BLOCO
+
+        # 3. Renderização (Saída de dados)
+        tela.fill(CINZA_ESCURO)
+
+        # Desenha a Comida (Vermelha) e a Cobra (Verde)
+        pygame.draw.rect(tela, VERMELHO, rect_comida)
+        pygame.draw.rect(tela, VERDE, rect_cobra)
+
+        pygame.display.flip()
+
+    pygame.quit()
+    sys.exit()
+        
+    """ if teclas[pygame.K_LEFT]:
             jogador["rect"].x -= velocidade
         if teclas[pygame.K_RIGHT]:
             jogador["rect"].x += velocidade
@@ -143,4 +192,4 @@ def executar_jogo():
 
         pygame.display.flip()
 
-    pygame.quit()
+    pygame.quit() """
