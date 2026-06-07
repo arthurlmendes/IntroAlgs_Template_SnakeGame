@@ -1,22 +1,25 @@
 import pygame
+import sys
+import random
 
 from src.config import (
     LARGURA_TELA,
     ALTURA_TELA,
     FPS,
     TITULO_JOGO,
-    CINZA,
-    CAMINHO_RECORDE,
-    CAMINHO_SPRITES,
+    CINZA_ESCURO,
+    VERDE,
+    VERMELHO,
+    TAMANHO_BLOCO,
 )
 
 from src.funcoes import (
-    calcular_pontos,
-    jogador_perdeu,
     limitar_valor,
     verificar_colisao,
-    tomar_dano,
+    mover_cabeca_cobra,
 )
+
+
 from src.sprites import pegar_sprite
 from src.dados import (
     salvar_recorde,
