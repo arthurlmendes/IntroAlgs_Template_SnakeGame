@@ -20,7 +20,6 @@ Liste os integrantes do grupo.
 
 ## 3. Tipo de jogo
 
-Snake (Jogo da Cobra)
 
 Exemplos:
 
@@ -37,9 +36,9 @@ Exemplos:
 - jogo de clique rápido;
 - jogo de sobrevivência simples.
 
-Tipo escolhido pelo grupo: 
+Tipo escolhido pelo grupo: Snake 
 
-> Escreva aqui.
+
 
 ## 4. Descrição geral do jogo
 
@@ -54,7 +53,7 @@ Procure responder:
 
 Descrição:
 
-> Escreva aqui.
+O jogo consiste em controlar uma cobra em uma grade bidimensional. Na tela, aparecerá a cobra (representada por blocos interligados), a comida (um bloco gerado aleatoriamente) e a pontuação atualizada no topo. O jogador controla a direção do movimento da cabeça da cobra. Cada vez que a cobra come a fruta, seu corpo cresce um bloco, a velocidade aumenta levemente e uma nova comida surge. O desafio é acumular a maior pontuação possível sem colidir com as paredes da janela ou com o próprio corpo da cobra.
 
 ## 5. Objetivo do jogador
 
@@ -72,7 +71,7 @@ Exemplos:
 
 Objetivo:
 
-> Escreva aqui.
+Coletar o maior número possível de comidas para crescer o corpo da cobra e alcançar a maior pontuação (e recorde) sem colidir.
 
 ## 6. Regras principais
 
@@ -88,17 +87,21 @@ Exemplo:
 
 Regras do grupo:
 
-- Regra 1:
-- Regra 2:
-- Regra 3:
-- Regra 4:
-- Regra 5:
+- Regra 1: A cobra se move continuamente na direção definida pelo jogador.
+
+- Regra 2: Não é permitido reverter a direção instantaneamente para o sentido oposto (ex: se estiver indo para a direita, não pode ir direto para a esquerda).
+
+- Regra 3: Cada comida coletada aumenta o tamanho da cobra em 1 bloco e soma 10 pontos ao placar.
+
+- Regra 4: A cada 50 pontos alcançados, a velocidade do jogo aumenta gradativamente (aumento de dificuldade).
+
+- Regra 5: O jogo salva e exibe o maior recorde (High Score) mesmo após fechar a janela.
 
 ## 7. Condição de vitória
 
 Explique como o jogador vence ou conclui o jogo.
 
-Exemplos:
+Exemplos: 
 
 - atingir determinada pontuação;
 - chegar ao final da fase;
@@ -108,7 +111,7 @@ Exemplos:
 
 Condição de vitória:
 
-> Escreva aqui.
+Por ser um jogo do estilo arcade infinito, não há uma condição de vitória definitiva. O objetivo é superar o recorde anterior (salvo em arquivo) e pontuar o máximo possível.
 
 ## 8. Condição de derrota ou encerramento
 
@@ -124,7 +127,7 @@ Exemplos:
 
 Condição de derrota ou encerramento:
 
-> Escreva aqui.
+A partida termina imediatamente (Game Over) se a cabeça da cobra colidir com qualquer uma das quatro bordas da tela ou se colidir com qualquer parte do seu próprio corpo.
 
 ## 9. Elementos previstos no jogo
 
@@ -136,9 +139,9 @@ Exemplo:
 
 > Um personagem controlado pelas setas do teclado.
 
-Descrição:
+Uma cobra composta por uma lista de coordenadas (blocos). A cabeça é controlada pelas setas do teclado e o corpo segue o rastro do movimento.
 
-> Escreva aqui.
+
 
 ## Obstáculos, inimigos ou desafios
 
@@ -148,7 +151,7 @@ Exemplo:
 
 Descrição:
 
-> Escreva aqui.
+As próprias bordas da tela e o corpo crescente da própria cobra atuam como os obstáculos mortais do jogo.
 
 ## Itens, alvos ou objetos de interação
 
@@ -158,7 +161,7 @@ Exemplo:
 
 Descrição:
 
-> Escreva aqui.
+A comida (fruta), que aparece de forma aleatória na tela (respeitando a grade) e que faz a cobra crescer ao ser coletada.
 
 ## Pontuação, vidas, tempo ou progresso
 
@@ -168,7 +171,7 @@ Exemplo:
 
 Descrição:
 
-> Escreva aqui.
+O jogador possui 1 vida por tentativa. A tela exibirá a pontuação atual (Score) e a maior pontuação já registrada na história do jogo (High Score).
 
 ## 10. Controles previstos
 
@@ -185,9 +188,12 @@ Exemplo:
 
 Controles do grupo:
 
-- Tecla/comando:
-- Tecla/comando:
-- Tecla/comando:
+- Tecla/comando: Seta para cima / Tecla W: Mover a cobra para cima
+- Tecla/comando: Seta para baixo / Tecla S: Mover a cobra para baixo
+- Tecla/comando: Seta para esquerda / Tecla A: Mover a cobra para a esquerda 
+- Tecla/comando: Seta para direita / Tecla D: Mover a cobra para a direita
+- Tecla/comando: Tecla R: Reiniciar a partida após o Game Over
+- Tecla/comando: ESC: Sair do jogo
 
 ## 11. Organização inicial do código
 
@@ -203,7 +209,15 @@ Exemplo:
 
 Organização planejada:
 
-> Escreva aqui.
+Conforme as regras do repositório padrão (Template oficial), utilizaremos a seguinte estrutura:
+
+main.py: Arquivo principal na raiz que inicializa o Pygame e chama o loop do jogo.
+
+src/config.py: Arquivo para armazenar constantes como dimensões da tela (ex: 600x600), tamanho do bloco da grade (ex: 20x20), velocidade e dicionário de cores (RGB).
+
+src/funcoes.py: Funções lógicas puras (geração aleatória de comida fora do corpo da cobra, checagem de colisões), ideais para a aplicação de testes unitários.
+
+src/arquivos.py: Funções responsáveis por ler e gravar o recorde máximo em um arquivo de texto (recorde.txt).
 
 
 ## 12. Recursos externos previstos
@@ -219,7 +233,7 @@ Exemplo:
 
 Recursos previstos:
 
-> Escreva aqui.
+Não pretendo utilizar recursos externos complexos. Toda a parte gráfica será gerada nativamente com formas geométricas do Pygame (pygame.draw.rect) e fontes padrão do sistema para garantir leveza e foco na lógica de programação.
 
 Caso não pretenda utilizar recursos externos, escreva:
 
@@ -242,9 +256,11 @@ Exemplos:
 
 Dificuldades previstas:
 
-- Dificuldade 1:
-- Dificuldade 2:
-- Dificuldade 3:
+- Dificuldade 1: Controle de atualização/FPS: Ajustar a velocidade de atualização da cobra para que ela se mova de bloco em bloco de forma fluida, sem correr rápido demais.
+
+- Dificuldade 2: Lógica de crescimento do corpo: Atualizar corretamente a lista de coordenadas da cobra (adicionar nova cabeça e remover a cauda, exceto quando ela come).
+
+- Dificuldade 3: Evitar bugs de input: Impedir que o jogador mude a direção duas vezes muito rápido antes do próximo frame, fazendo a cobra colidir consigo mesma por engano.
 
 ## 14. Escopo mínimo para a entrega final
 
@@ -258,7 +274,7 @@ Exemplo:
 
 Escopo mínimo:
 
-> Escreva aqui.
+Uma janela Pygame estruturada com uma cobra se movimentando pela grade via teclado, sistema de colisão com as bordas e consigo mesma funcionando, geração de comida, pontuação básica na tela, gravação do recorde em arquivo externo e uma tela simples de "Game Over" com opção de reiniciar.
 
 ## 15. Possíveis melhorias, caso haja tempo
 
@@ -278,6 +294,7 @@ Exemplos:
 
 Melhorias possíveis:
 
-- Melhoria 1:
-- Melhoria 2:
-- Melhoria 3:
+- Melhoria 1: Adicionar uma tela de menu inicial para começar o jogo.
+- Melhoria 2: Inserir obstáculos fixos (paredes internas) no cenário após atingir certa pontuação.
+- Melhoria 3: Sistema de frutas especiais com cores diferentes que dão bônus de pontos temporários.
+- Melhoria 4: Efeitos sonoros básicos (som ao comer a fruta e som de Game Over).
