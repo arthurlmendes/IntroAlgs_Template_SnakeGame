@@ -1,24 +1,3 @@
-import pygame
-import sys
-import random
-
-from src.config import (
-    LARGURA_TELA,
-    ALTURA_TELA,
-    FPS,
-    TITULO_JOGO,
-    CINZA_ESCURO,
-    VERDE,
-    VERMELHO,
-    TAMANHO_BLOCO,
-)
-
-from src.funcoes import (
-    limitar_valor,
-    verificar_colisao,
-    mover_cabeca_cobra,
-)
-
 
 
 def calcular_pontos(pontos_atual, pontos_ganhos):
