@@ -1,25 +1,21 @@
 import pygame
 import sys
-from src.config import (
-    LARGURA_TELA,
-    ALTURA_TELA,
-    FPS,
-    TITULO_JOGO,
-    CINZA_ESCURO,
-    VERDE,
-    VERDE_ESCURO,
-    VERMELHO,
-    BRANCO,
-    TAMANHO_BLOCO,
-    CAMINHO_RECORDE
-)
-from src.funcoes import (
-    mover_cobra,
-    verificar_colisao_bordas,
-    verificar_colisao_autofagia,
-    gerar_comida
-)
+from src.config import *
+from src.funcoes import mover_cobra, verificar_colisao_bordas, verificar_colisao_autofagia, gerar_comida
 from src.dados import carregar_recorde, salvar_recorde
+
+def desenhar_texto_centralizado(tela, texto, fonte, cor, y_offset=0):
+    """Função auxiliar para renderizar textos bem no centro da tela."""
+    superficie = fonte.render(texto, True, cor)
+    retangulo = superficie.get_rect(center=(LARGURA_TELA / 2, ALTURA_TELA / 2 + y_offset))
+    tela.blit(superficie, retangulo)
+
+def desenhar_grade(tela):
+    
+    for x in range(0, LARGURA_TELA, TAMANHO_BLOCO):
+        pygame.draw.line(tela, GRADE, (x, 0), (x, ALTURA_TELA))
+    for y in range(0, ALTURA_TELA, TAMANHO_BLOCO):
+        pygame.draw.line(tela, GRADE, (0, y), (LARGURA_TELA, y))
 
 def executar_jogo():
     pygame.init()
@@ -27,105 +23,108 @@ def executar_jogo():
     pygame.display.set_caption(TITULO_JOGO)
     relogio = pygame.time.Clock()
     
-    # Fonte para renderizar o Score na tela
-    fonte = pygame.font.SysFont("Arial", 24)
     
-    # Estado inicial do jogo (Semana 3)
-    # Corpo representado por uma lista de segmentos [x, y]
-    corpo_cobra = [[300, 300], [280, 300], [260, 300]]
-    direcao = "DIREITA"
-    velocidade_atual = FPS
+    fonte_titulo = pygame.font.SysFont("arial", 60, bold=True)
+    fonte_media = pygame.font.SysFont("arial", 28, bold=True)
+    fonte_pequena = pygame.font.SysFont("arial", 20)
     
-    pontos = 0
+    estado = "MENU" 
+    
+    # Variáveis de sessão
     recorde = carregar_recorde(CAMINHO_RECORDE)
-    
-    comida = gerar_comida(corpo_cobra, LARGURA_TELA, ALTURA_TELA, TAMANHO_BLOCO)
-    
-    rodando = True
-    game_over = False
+    corpo_cobra = []
+    direcao = ""
+    comida = []
+    pontos = 0
+    velocidade_atual = FPS_INICIAL
 
-    while rodando:
-        # Loop de Game Over (Permite reiniciar com 'R' ou sair com 'ESC')
-        while game_over:
-            tela.fill(CINZA_ESCURO)
-            texto_game_over = fonte.render("GAME OVER! Pressione R para Reiniciar ou ESC para Sair", True, VERMELHO)
-            tela.blit(texto_game_over, (LARGURA_TELA // 2 - texto_game_over.get_width() // 2, ALTURA_TELA // 2))
-            pygame.display.flip()
+    while True:
+        tela.fill(FUNDO)
+
+        if estado == "MENU":
+            desenhar_grade(tela)
+            desenhar_texto_centralizado(tela, "SNAKE GAME", fonte_titulo, CABECA, -50)
+            desenhar_texto_centralizado(tela, "Pressione ESPAÇO para Iniciar", fonte_pequena, BRANCO, 20)
+            desenhar_texto_centralizado(tela, f"Recorde Atual: {recorde}", fonte_media, AMARELO, 80)
             
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                if evento.type == pygame.KEYDOWN:
-                    if evento.key == pygame.K_ESCAPE:
-                        pygame.quit()
-                        sys.exit()
-                    if evento.key == pygame.K_r:
-                        # Reinicia as variáveis do jogo
-                        corpo_cobra = [[300, 300], [280, 300], [260, 300]]
-                        direcao = "DIREITA"
-                        pontos = 0
-                        velocidade_atual = FPS
-                        comida = gerar_comida(corpo_cobra, LARGURA_TELA, ALTURA_TELA, TAMANHO_BLOCO)
-                        game_over = False
-
-        # Loop de Jogo Normal
-        relogio.tick(velocidade_atual)
-
-        # 1. Captura de Eventos / Entradas
-        for evento in pygame.event.get():
-            if evento.type == pygame.QUIT:
-                rodando = False
-            elif evento.type == pygame.KEYDOWN:
-                if evento.key in (pygame.K_UP, pygame.K_w) and direcao != "BAIXO":
-                    direcao = "CIMA"
-                elif evento.key in (pygame.K_DOWN, pygame.K_s) and direcao != "CIMA":
-                    direcao = "BAIXO"
-                elif evento.key in (pygame.K_LEFT, pygame.K_a) and direcao != "DIREITA":
-                    direcao = "ESQUERDA"
-                elif evento.key in (pygame.K_RIGHT, pygame.K_d) and direcao != "ESQUERDA":
+                if evento.type == pygame.KEYDOWN and evento.key == pygame.K_SPACE:
+                    # Configura as variáveis iniciais para começar a jogar
+                    corpo_cobra = [[300, 300], [280, 300], [260, 300]]
                     direcao = "DIREITA"
+                    pontos = 0
+                    velocidade_atual = FPS_INICIAL
+                    comida = gerar_comida(corpo_cobra, LARGURA_TELA, ALTURA_TELA, TAMANHO_BLOCO)
+                    estado = "JOGANDO"
 
-        # 2. Movimentação da Cobra
-        corpo_cobra = mover_cobra(corpo_cobra, direcao, TAMANHO_BLOCO)
-
-        # Interação: Verificação de colisão com a comida
-        if corpo_cobra[0] == comida:
-            pontos += 10
-            comida = gerar_comida(corpo_cobra, LARGURA_TELA, ALTURA_TELA, TAMANHO_BLOCO)
+      
+        elif estado == "JOGANDO":
+            relogio.tick(velocidade_atual)
             
-            # Mecânica de Dificuldade: Aumenta a velocidade a cada 50 pontos
-            if pontos % 50 == 0:
-                velocidade_atual += 1
-                
-            # Atualiza e salva o recorde imediatamente se for superado
-            if pontos > recorde:
-                recorde = pontos
-                salvar_recorde(CAMINHO_RECORDE, recorde)
-        else:
-            # Se não comeu a comida, remove o último segmento para manter o tamanho estável
-            corpo_cobra.pop()
+            for evento in pygame.event.get():
+                if evento.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif evento.type == pygame.KEYDOWN:
+                    if evento.key in (pygame.K_UP, pygame.K_w) and direcao != "BAIXO":
+                        direcao = "CIMA"
+                    elif evento.key in (pygame.K_DOWN, pygame.K_s) and direcao != "CIMA":
+                        direcao = "BAIXO"
+                    elif evento.key in (pygame.K_LEFT, pygame.K_a) and direcao != "DIREITA":
+                        direcao = "ESQUERDA"
+                    elif evento.key in (pygame.K_RIGHT, pygame.K_d) and direcao != "ESQUERDA":
+                        direcao = "DIREITA"
 
-        # Condições Game Over
-        if verificar_colisao_bordas(corpo_cobra[0], LARGURA_TELA, ALTURA_TELA) or verificar_colisao_autofagia(corpo_cobra):
-            game_over = True
+            corpo_cobra = mover_cobra(corpo_cobra, direcao, TAMANHO_BLOCO)
 
-        # 3. Renderização dos Gráficos
-        tela.fill(CINZA_ESCURO)
-        
-        # Desenha a Comida
-        pygame.draw.rect(tela, VERMELHO, (comida[0], comida[1], TAMANHO_BLOCO, TAMANHO_BLOCO))
-        
-        # Desenha a Cobra (Cabeça com uma cor diferente do corpo)
-        for i, segmento in enumerate(corpo_cobra):
-            cor = VERDE if i == 0 else VERDE_ESCURO
-            pygame.draw.rect(tela, cor, (segmento[0], segmento[1], TAMANHO_BLOCO, TAMANHO_BLOCO))
+            # Lógica de comer
+            if corpo_cobra[0] == comida:
+                pontos += 10
+                comida = gerar_comida(corpo_cobra, LARGURA_TELA, ALTURA_TELA, TAMANHO_BLOCO)
+                if pontos % 50 == 0:
+                    velocidade_atual += 1 # Aumenta a dificuldade
+            else:
+                corpo_cobra.pop() # Remove a cauda se não comeu
 
-        # Desenha a Interface de Pontos na Tela
-        superficie_pontos = fonte.render(f"Pontos: {pontos}  |  Recorde: {recorde}", True, BRANCO)
-        tela.blit(superficie_pontos, (15, 15))
+            # Verifica colisões (Derrota)
+            if verificar_colisao_bordas(corpo_cobra[0], LARGURA_TELA, ALTURA_TELA) or verificar_colisao_autofagia(corpo_cobra):
+                if pontos > recorde:
+                    recorde = pontos
+                    salvar_recorde(CAMINHO_RECORDE, recorde)
+                estado = "GAMEOVER"
+
+            # Renderização do Jogo
+            desenhar_grade(tela)
+            
+            # Desenha a comida (com uma borda interna para parecer mais arredondada/bonita)
+            pygame.draw.rect(tela, COMIDA, (comida[0], comida[1], TAMANHO_BLOCO, TAMANHO_BLOCO), border_radius=4)
+            
+            # Desenha a cobra
+            for i, segmento in enumerate(corpo_cobra):
+                cor = CABECA if i == 0 else CORPO
+                # Desenha o bloco com um espaçamento mínimo para separar as "escamas"
+                retangulo = pygame.Rect(segmento[0] + 1, segmento[1] + 1, TAMANHO_BLOCO - 2, TAMANHO_BLOCO - 2)
+                pygame.draw.rect(tela, cor, retangulo, border_radius=2)
+
+            # Placar no topo
+            texto_placar = fonte_pequena.render(f"Pontos: {pontos}   |   Recorde: {recorde}", True, BRANCO)
+            tela.blit(texto_placar, (10, 10))
+
+    
+        elif estado == "GAMEOVER":
+            desenhar_grade(tela)
+            desenhar_texto_centralizado(tela, "GAME OVER", fonte_titulo, COMIDA, -50)
+            desenhar_texto_centralizado(tela, f"Sua Pontuação: {pontos}", fonte_media, BRANCO, 20)
+            desenhar_texto_centralizado(tela, "Pressione ESPAÇO para Tentar Novamente", fonte_pequena, AMARELO, 80)
+            
+            for evento in pygame.event.get():
+                if evento.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if evento.type == pygame.KEYDOWN and evento.key == pygame.K_SPACE:
+                    estado = "MENU" # Volta para o menu inicial
 
         pygame.display.flip()
-
-    pygame.quit()
-    sys.exit()
